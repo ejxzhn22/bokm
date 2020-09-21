@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bokm.replyMapper">
+
+	<select id="findAll" resultType="Review">
+		select * from review
+	</select>
+	
+	<select id="findByICode" parameterType="String" resultType="Review">
+		select * from review where rv_icode="%"+#{bk_icode}+"%"
+	</select>
+	
+	
+	
+	<!-- //============================서평===============================// -->
+<!-- 마이페이지 내 서평 리스트 -->
+<select id="reviewbookname" parameterType="int" resultType="Map">
+	select book.bk_name, review.rv_id,review.rv_icode,review.rv_name,review.rv_content,review.rv_date,review.rv_mb_id 
+	from review 
+	join book on book.bk_icode=review.rv_icode
+	where review.rv_mb_id=#{rv_mb_id}
+	order by rv_date desc
+</select>
+<!-- 서평 전체 조회(관리자 더보기) -->
+<select id="reviewListSelectMore" resultType="Review" parameterType="String">
+	select rv_id,rv_icode,rv_name,rv_content,rv_date,rv_mb_id from review 
+	where rv_icode=#{rv_icode} 
+	order by rv_date desc
+	
+</select>
+<!-- 서평 전체 조회(사용자) -->
+<select id="reviewListSelect" resultType="Review" parameterType="Review">
+	select rv_id,rv_icode,rv_name,rv_content,rv_date,rv_mb_id from review 
+	where rv_mb_id=#{rv_mb_id} 
+	order by rv_date desc
+	
+</select>
+<!-- 서평 추가 -->
+<insert id="reviewCreate" parameterType="Review">
+	insert into review(rv_icode,rv_name,rv_content,rv_date,rv_mb_id) 
+	values(#{rv_icode},#{rv_name},#{rv_content},now(),#{rv_mb_id})
+</insert>
+<!-- 서평 수정 -->
+<update id="reviewUpdate" parameterType="Review">
+	update review 
+	set rv_content=#{rv_content} 
+	where rv_id=#{rv_id}
+</update>
+<!-- 서평 삭제 -->
+<delete id="reviewDelete" parameterType="int">
+	delete from review 
+	where rv_id=#{rv_id}
+</delete>
+
+</mapper>

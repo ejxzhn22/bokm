@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bokm.boardMapper">
+
+<!-- 전체 리스트 출력하는 쿼리(페이징) -->
+<select id="boardListAlll" resultType="Board" parameterType="String">
+	select bb_num,bb_id,bb_title,bb_content,bb_name,bb_image,bb_date,bb_readcnt,bb_bnum,bb_del 
+	from board where bb_del=0 and bb_bnum=#{bb_bnum}
+	order by bb_date desc,bb_num desc
+</select>
+
+<!-- 해당 게시판 리스트 출력하는 쿼리(페이징) -->
+<select id="boardListSelect" resultType="Board" parameterType="Criteria">
+	<![CDATA[
+	select bb_num,bb_id,bb_title,bb_content,bb_name,bb_image,bb_date,bb_readcnt,bb_bnum,bb_del 
+	from board where bb_del=0 and bb_bnum=#{bb_bnum} and bb_num > 0
+	]]>
+	<include refid="search"/>	
+	<![CDATA[
+	order by bb_date desc,bb_num desc
+	limit #{pageStart}, #{perPageNum}
+	]]>
+</select>
+
+<!-- 전체게시글 갯수를 구하는 쿼리(페이징) // 게시판별로 총 개수를 구해야 하기때문에 where절에 bb_bnum조건 추가-->
+	<select id="countArticles" resultType="int" parameterType="String">
+    <![CDATA[
+	    select COUNT(bb_num)
+	    from board
+	    where bb_num > 0 and bb_bnum=#{bb_bnum} and bb_del=0
+    ]]>
+    <include refid="search"/>
+	</select>
+	
+<!-- 동적 검색 sql // id=search , inclue를 사용하여 sql중복 제거/sql 재사용 가능-->
+	<sql id="search">
+    <if test="searchType != null">
+        <if test="searchType == 't'.toString()">
+            AND bb_title LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="searchType == 'c'.toString()">
+            AND bb_content LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="searchType == 'w'.toString()">
+            AND bb_name LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="searchType == 'tc'.toString()">
+            AND (
+                bb_title LIKE CONCAT('%', #{keyword}, '%')
+                OR bb_content LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+        <if test="searchType == 'cw'.toString()">
+            AND (
+                bb_content LIKE CONCAT('%', #{keyword}, '%')
+                OR bb_name LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+        <if test="searchType == 'tcw'.toString()">
+            AND (
+                bb_title LIKE CONCAT('%', #{keyword}, '%')
+                OR bb_content LIKE CONCAT('%', #{keyword}, '%')
+                OR bb_name LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+    </if>
+</sql>
+
+
+<!-- 게시판 상세정보 보기 -->
+<select id="boardDetail" resultType="Board" parameterType="int">
+	select bb_num,bb_id,bb_title,bb_content,bb_name,bb_image,bb_date,bb_readcnt,bb_bnum,bb_del 
+	from board 
+	where bb_num=#{bb_num}
+</select>
+
+<!--  글 추가 -->
+<insert id="boardInsert" parameterType="Board">
+	insert into board(bb_id,bb_title,bb_content,bb_name,bb_image,bb_date,bb_bnum) 
+	values(#{bb_id},#{bb_title},#{bb_content},#{bb_name},#{bb_image},now(),#{bb_bnum})
+</insert>
+
+<!--  글 수정  //bb_date 컬럼은 수정했을시에 게시글 날짜가 최신으로 바뀜으로 제외함-->
+<update id="boardUpdate" parameterType="Board">
+	update board set bb_title=#{bb_title}, bb_content=#{bb_content}, bb_image=#{bb_image} 
+	where bb_num=#{bb_num}
+</update>
+	
+	
+<!--  글 삭제 -->
+<update id="boardDelete" parameterType="int">
+	update board set bb_del=1 where bb_num=#{bb_num}
+</update>
+  	
+  	
+<!--  조회수 1 증가시키는 sql -->
+<update id="boardCntUpdate" parameterType="int">
+	update board set bb_readcnt=bb_readcnt+1 where bb_num=#{bb_num}
+</update>
+
+<!-- =======수진============= -->
+ 	<!-- 내가쓴글 갯수 -->
+<select id="boardcount" parameterType="int" resultType="int">
+	select count(*) from board where bb_bnum="qna" and bb_id=#{mb_id}
+</select>
+
+ 	<!-- 내가쓴글 목록 -->
+<select id="myboard" parameterType="int" resultType="Board">
+ 	select bb_num, bb_title, bb_date, bb_readcnt from board where bb_bnum="qna" and bb_id=#{mb_id}
+</select>
+	
+	
+<!-- //============================댓글===============================// -->
+<!-- 댓글 전체 조회(관리자 더보기) -->
+<select id="boardReplyListSelectMore" resultType="BoardReply" parameterType="int">
+	select rp_num,rp_bb_num,rp_content,rp_name,rp_date,rp_image,rp_mb_id from board_reply 
+	where rp_bb_num=#{rp_bb_num} 
+	order by rp_date desc
+	
+</select>
+<!-- 댓글 전체 조회(사용자) -->
+<select id="boardReplyListSelect" resultType="BoardReply" parameterType="int">
+	select rp_num,rp_bb_num,rp_content,rp_name,rp_date,rp_image,rp_mb_id from board_reply 
+	where rp_bb_num=#{rp_bb_num} 
+	order by rp_date desc
+	
+</select>
+<!-- 댓글 추가 -->
+<insert id="boardReplyCreate" parameterType="BoardReply">
+	insert into board_reply(rp_bb_num,rp_content,rp_name,rp_date,rp_image,rp_mb_id) 
+	values(#{rp_bb_num},#{rp_content},#{rp_name},now(),#{rp_image},#{rp_mb_id})
+</insert>
+<!-- 댓글 수정 -->
+<update id="boardReplyUpdate" parameterType="BoardReply">
+	update board_reply 
+	set rp_content=#{rp_content} 
+	where rp_num=#{rp_num}
+</update>
+<!-- 댓글 삭제 -->
+<delete id="boardReplyDelete" parameterType="int">
+	delete from board_reply 
+	where rp_num=#{rp_num}
+</delete>
+
+</mapper>

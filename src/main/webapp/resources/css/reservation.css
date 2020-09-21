@@ -1,0 +1,38 @@
+@charset "UTF-8";
+
+
+section{
+	width:1250px;
+	margin:0 auto;
+	margin-top:60px;
+	padding-bottom:20px;
+	
+}
+.reservation_top{
+	display:flex;
+	padding-top:20px;
+}
+.reservation_topline{
+	width:1100px;
+	border-top:3px solid #f0f0f0;
+}
+.reservation_title {
+  width:140px;
+  font-size: 32px;
+  margin: 0 0 30px;
+  padding-top:20px;
+  border-top:3px solid orange;
+  color:#383737;
+}
+
+
+.reservation_guide-list {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 1em;
+  margin-bottom: 65px;
+}
+section.reservation {
+    height: inherit;
+}
+

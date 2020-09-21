@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bokm.bookMapper">
+
+	<!-- 대출신청 대출상세 borrowdetail insert -->
+	<insert id="borrowdetail" parameterType="com.bokm.vo.BorrowDetail">
+		insert into borrowdetail( bd_bcode, bd_state_num,bd_count,bd_date,bd_return_date)
+		values(#{bd_bcode}, 1,#{bd_count},now(),date_add(now(),INTERVAL 5 DAY))
+	</insert>
+	
+	<!-- 대출신청 대출리스트 borrowlist insert-->
+	<insert id="borrowlist" parameterType="int">
+		insert into borrowlist(bl_id)
+		values( #{bl_id})
+	</insert>
+	
+	<!-- 대출한 책 대출상태를 대출중으로 수정 -->
+	<update id="borrowupdate" parameterType="String">
+		update book set bk_state="대출중" where bk_icode=#{bd_bcode}
+	</update>
+	
+	<!-- isbn으로 책정보 가져오기 -->
+	<select id="selectbook" parameterType="String" resultType="Book">
+		select bk_id, bk_name, bk_writer, bk_image, bk_icode, bk_state from book where bk_icode = #{bd_bcode}
+	</select>
+	
+	<!-- 대출건수 가져오기 -->
+	<select id="borrowcount"  resultType="int" parameterType="int">
+		select count(*) from borrowlist where bl_id=#{mb_id}
+	</select>
+	
+	<!-- 대출현황상세(대출중) 가져오기 -->
+	<select id="currentborrow" parameterType="int" resultType="java.util.Map">
+		select  DATEDIFF(now(), borrowdetail.bd_return_date) as arrearsdate,borrowlist.bl_num, borrowlist.bl_id, bd_bo_num,bd_reservation,bd_bcode,bd_date,bd_return_date,bd_arrears,bd_real_extension,bd_real_return_date,book.bk_icode,book.bk_name,book.bk_writer
+		from borrowdetail
+		inner join borrowlist on (borrowdetail.bd_bo_num = borrowlist.bl_num and borrowlist.bl_id=#{mb_id})
+		inner join book on borrowdetail.bd_bcode = book.bk_icode
+		where bd_state_num=1
+		order by bd_date desc
+	</select>
+	
+	<!-- 대출연장하기 -->
+	<update id="extension" parameterType="int">
+		update borrowdetail set bd_real_extension = "연장함", bd_return_date = DATE_ADD(now(), INTERVAL 5 DAY) where bd_bo_num = #{bd_bo_num}
+	</update>
+	
+	<!--  연체 update -->
+	<update id="arrears">
+		<![CDATA[
+		update borrowdetail set bd_arrears="연체" where bd_return_date < now() and bd_state_num = 1
+		]]>
+	</update>
+	
+	<!-- 연체 건수 -->
+	<select id="arrearscount" parameterType="int" resultType="int">
+		select count(*) from borrowlist join borrowdetail on(borrowlist.bl_num = borrowdetail.bd_bo_num)
+		where borrowlist.bl_id=#{mb_id} and borrowdetail.bd_arrears = '연체'
+	</select>
+	
+	
+	
+	<!-- 대출현황상세(대출/반납이력) 가져오기 -->
+	<select id="pastborrow" parameterType="int" resultType="java.util.Map">
+		select  borrowlist.bl_id, bd_bo_num,bd_bcode,bd_date,bd_return_date,bd_arrears,bd_real_return_date,book.bk_name,book.bk_writer,book.bk_publisher
+		from borrowdetail
+		inner join borrowlist on (borrowdetail.bd_bo_num = borrowlist.bl_num and borrowlist.bl_id=#{mb_id})
+		inner join book on borrowdetail.bd_bcode = book.bk_icode
+		where bd_state_num=2
+		order by bd_date desc
+	</select>
+	
+	<!-- 책 상세에서 예약자 유무 확인 -->
+	<select id="isbndetail" parameterType="String" resultType="Map">
+		select book.bk_state, book.bk_icode, book.bk_name, book.bk_writer, borrowdetail.bd_real_return_date, borrowdetail.bd_return_date, borrowdetail.bd_reservation,borrowdetail.bd_state_num
+		from book
+		join borrowdetail on book.bk_icode = borrowdetail.bd_bcode
+		where book.bk_icode=#{bk_icode}
+		order by borrowdetail.bd_return_date desc ,borrowdetail.bd_real_return_date desc
+	</select>
+	
+	<!-- 예약하기 -->
+	<update id="reservation" parameterType="Map">
+		update borrowdetail set bd_reservation=#{mb_id} where bd_bo_num = #{bd_bo_num} 
+	</update>
+	
+	<!-- 대출번호 가져오기 -->
+	<select id="searchnum" parameterType="String" resultType="int">
+		select bd_bo_num from borrowdetail where bd_bcode=#{bk_icode}
+		order by bd_bo_num desc
+	</select>
+	
+	<!-- 예약건수  -->
+	<select id="resercount" resultType="int">
+		select count(*) from borrowdetail where bd_reservation = #{mb_id}
+	</select>
+	
+	<!-- 예약현황 가져오기 -->
+	<select id="currentreser" resultType="Map" parameterType="int">
+		select book.bk_name, book.bk_writer, book.bk_publisher, book.bk_icode, borrowdetail.bd_return_date,borrowdetail.bd_real_return_date
+		from book
+		join borrowdetail on borrowdetail.bd_bcode=book.bk_icode
+		where borrowdetail.bd_reservation = #{mb_id};
+	</select>
+	
+	<!-- 예약취소 -->
+	<update id="cancelreser" parameterType="Book">
+		update borrowdetail set bd_reservation=0 where bd_reservation=#{bk_id} and bd_bcode=#{bk_icode}
+	</update>
+	
+	<!-- isbn으로 borrowdetail 예약자 확인  (대출에서 사용) -->
+	<select id="searchdetail" parameterType="Map" resultType="Map">
+		select bd_reservation from borrowdetail where bd_bcode=#{bk_icode} and bd_reservation=#{bl_id} 
+		order by bd_return_date desc ,bd_real_return_date desc;
+	</select>
+	
+	<!-- bd_bo_num(대출번호)로 예약자 확인 -->
+	<select id="searchreser" parameterType="int" resultType="int">
+		select bd_reservation from borrowdetail where bd_bo_num = #{bd_bo_num}
+	</select>
+	
+	<!-- 개인공지 가져오기 -->
+	<select id="mynotice" parameterType="int" resultType="Board">
+	 	select * from board where bb_del=0 and bb_id=#{mb_id} and bb_bnum="personal" 
+	 	order by bb_date desc;
+	</select>
+	
+	<!-- 안읽은 개인공지 가져오기 -->
+	<select id="noread" parameterType="int" resultType="Board">
+	 	select * from board where bb_del=0 and bb_id=#{mb_id} and bb_bnum="personal" and bb_readcnt=0
+	</select>
+	
+	<!-- 안읽은 개인공지 갯수 가져오기 -->
+	<select id="noticecount" parameterType="int" resultType="int">
+	 	select count(*) from board where bb_del=0 and bb_id=#{mb_id} and bb_bnum="personal" and bb_readcnt=0
+	</select>
+	
+	<!-- 개인공지 조회수 -->
+	<update id="noticeup" parameterType="int">
+		update board set bb_readcnt=bb_readcnt+1 where bb_num = #{bb_num}
+	</update>
+	
+	<!-- 개인공지 삭제 -->
+	<update id="noticedel" parameterType="int">
+		update board set bb_del=1 where bb_num=#{bb_num}
+	</update>
+	
+		
+	<!-- ========================제선 ====================================================== -->
+	
+	<!-- 우리 도서관 책목록에 원하는 책이 없다면 희망도서신청 테이블에 책이 들어가게 하는 질의문 -->
+	<insert id="bookRequest" parameterType="com.bokm.vo.BookRequestVO">
+		insert into bookrequest 
+		 (br_num, br_id, br_name, br_bcode, br_writer, br_title, br_reason, br_date, br_situation) 
+		 select #{br_num},#{br_id},#{br_name},#{br_bcode},#{br_writer},#{br_title},#{br_reason},now(),#{br_situation} from dual 
+		 where not exists(select bk_icode from book where bk_icode=#{br_bcode});
+	</insert>
+	<!-- 관리자 모드에서 희망도서 들어온 리스트 띄워주는 질의문 -->
+	<select id="manager_bookRequestList" resultType="com.bokm.vo.BookRequestVO">
+		select br_num, br_id, br_name, br_bcode, br_writer, br_title, br_reason, br_date, br_situation
+		 from bookrequest where br_situation=0;
+	</select>
+	<!-- 관리자 모드에서 리스트에 항목을 눌렀을 때 상세보기 시켜주는 질의문 -->
+	<select id="manager_bookRequestListDetail" parameterType="int" resultType="com.bokm.vo.BookRequestVO">
+		select br_num, br_id, br_name, br_bcode, br_writer, br_title, br_reason, br_date, br_situation
+		 from bookrequest where br_num=#{br_num}
+	</select>
+	<!-- 관리자 모드 승인상태 1로 바꿔주는 질의문 -->
+	<update id="manager_bookRequestApprove" parameterType="int">
+		update bookrequest set br_situation=1 where br_num=#{br_num};
+	</update>
+	<!-- 관리자 모드 희망도서테이블에서 북테이블로 가는 질의문 -->
+	<insert id="manager_insertbook" parameterType="com.bokm.vo.Book">
+		insert into book(bk_id, bk_icode, bk_name, bk_introduction, bk_publicday, bk_publisher, bk_writer, bk_image) 
+		values(#{bk_id},#{bk_icode},#{bk_name},#{bk_introduction},#{bk_publicday}, #{bk_publisher}, #{bk_writer}, #{bk_image})
+	</insert> 
+	<!-- 관리자 모드에서 모든 책 리스트 보는 질의문 -->
+	<select id="manager_allbook" resultType="com.bokm.vo.Book">
+		select * from book
+	</select>
+	
+	<!-- =============================================================== -->
+	
+	<!-- new 책 상세보기 -->
+	<select id="manager_allbookDetail" resultType="com.bokm.vo.Book" parameterType="String">
+		select * from book where bk_icode=#{bk_icode}
+	</select>
+
+	<!-- new 추천도서 만들기 -->
+	<update id="manager_recBook" parameterType="String">
+		update book set bk_pop=1 where bk_icode=#{bk_icode};
+	</update>
+
+	<!-- new 추천도서 리스트 보기 -->
+	<select id="manager_recBookList" resultType="com.bokm.vo.Book">
+		select * from book where bk_pop=1
+	</select>
+
+	<!-- new 추천도서에서 해제 -->
+	<update id="manager_notrecBook" parameterType="String">
+		update book set bk_pop=0 where bk_icode=#{bk_icode};
+	</update>
+
+	<!-- new 인기도서 띄워주기 -->
+	<select id="bookPopular" resultType="com.bokm.vo.BorrowDetail">
+		select bd_bcode, count(*) as bd_count from borrowdetail group by bd_bcode order by count(*) desc limit 0,9
+	</select>
+	
+	<!-- 동적 검색 sql // id=search , inclue를 사용하여 sql중복 제거/sql 재사용 가능-->
+
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bokm.memberMapper">
+
+		<!-- 내정보 가져오기 -->
+	<select id="myinfo" parameterType="int" resultType="com.bokm.vo.Member">
+		select mb_email,mb_name,mb_address,mb_phone,mb_auth 
+		from member
+		where mb_id=#{mb_id};
+	</select>
+	
+	<insert id="join" parameterType="Member">
+		insert into
+		member(mb_email,mb_pw,mb_name,mb_address,mb_phone)
+		values
+		(#{mb_email},#{mb_pw},#{mb_name},#{mb_address},#{mb_phone})
+	</insert>
+
+	<!-- 아이디중복확인 -->
+	<select id="idCheck" parameterType="String" resultType="Member">
+		select *
+		from member
+		where mb_email=#{mb_email} and mb_del=0
+	</select>
+
+	<select id="searchbyid" parameterType="int" resultType="Member">
+		select * from member
+		where mb_id=#{mb_id} and mb_del=0
+	</select>
+
+	<!-- 회원정보수정 -->
+	<update id="infoupdate" parameterType="Member">
+		update member
+		set mb_name=#{mb_name},
+		mb_address=#{mb_address},
+		mb_email=#{mb_email},
+		mb_phone=#{mb_phone},
+		mb_pw=#{mb_pw}
+		where mb_id=#{mb_id} and mb_del=0
+	</update>
+
+	<update id="delete" parameterType="Int">
+		update member
+		set mb_del=1
+		where
+		mb_id=#{mb_id}
+	</update>
+
+	<!-- 회원목록 -->
+	<select id="listmember" resultType="Member">
+		select * from member
+		where mb_auth = "user" and mb_del=0
+		order by mb_id desc;
+	</select>
+	
+	<!-- 탈퇴회원목록 -->
+	<select id="deletelistmember" resultType="Member">
+		select * from member
+		where mb_auth = "user" and mb_del=1
+		order by mb_id desc;
+	</select>
+	
+	<!-- 아이디 찾기 서비스 -->
+		<select id="resultid2" parameterType="Member" resultType="Member">
+		select * from member
+		where mb_name=#{mb_name} and mb_phone=#{mb_phone} and mb_del=0
+	</select>
+	
+	
+	
+</mapper>

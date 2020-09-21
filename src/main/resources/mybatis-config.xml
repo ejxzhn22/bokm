@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE configuration
+
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+
+
+<configuration>
+
+	<typeAliases>		
+
+		<typeAlias alias="Book" type="com.bokm.vo.Book" />
+		<typeAlias alias="Member" type="com.bokm.vo.Member" />
+		<typeAlias alias="Board" type="com.bokm.vo.Board" />
+		<typeAlias alias="BoardReply" type="com.bokm.vo.BoardReply" />
+		<typeAlias alias="Criteria" type="com.bokm.vo.Criteria" />
+		<typeAlias alias="Review" type="com.bokm.vo.Review"/>
+		
+
+	</typeAliases>
+
+</configuration>

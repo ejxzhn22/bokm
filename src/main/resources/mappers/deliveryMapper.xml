@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bokm.deliveryMapper">
+	<!-- 전체 책 목록 출력 -->
+	<select id="delivery_allBook" resultType="com.bokm.vo.Book" parameterType="Criteria">
+		<![CDATA[select * from book where 
+		bk_id>0 ]]>
+    	<include refid="search1"/> 
+		<![CDATA[order by bk_name asc limit #{pageStart}, #{perPageNum}]]>
+	</select>
+	
+
+	<sql id="search1">
+    <if test="searchType != null">
+        <if test="searchType == 't'.toString()">
+            AND bk_name LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="searchType == 'c'.toString()">
+            AND bk_introduction LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="searchType == 'w'.toString()">
+            AND bk_writer LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="searchType == 'tc'.toString()">
+            AND (
+                bk_name LIKE CONCAT('%', #{keyword}, '%')
+                OR bk_introduction LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+        <if test="searchType == 'cw'.toString()">
+            AND (
+                bk_introduction LIKE CONCAT('%', #{keyword}, '%')
+                OR bk_writer LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+        <if test="searchType == 'tcw'.toString()">
+            AND (
+                bk_name LIKE CONCAT('%', #{keyword}, '%')
+                OR bk_introduction LIKE CONCAT('%', #{keyword}, '%')
+                OR bk_writer LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+    </if>
+</sql>
+	
+	
+	<!-- 크리테리아 -->
+	<select id="listCriteria" resultType="com.bokm.vo.Book">
+		<![CDATA[select * from book where bk_id>0 order by bk_name desc limit #{pageStart}, #{perPageNum}]]>
+	</select>
+	<!-- 책의 상세정보 띄워주기 -->
+	<select id="delivery_detailBook" parameterType="String" resultType="com.bokm.vo.Book">
+		select bk_icode, bk_name, bk_introduction, bk_publicday,bk_publisher,bk_writer,bk_image,bk_state
+		 from book where bk_icode=#{bk_icode}
+	</select>
+	<!-- 배송 정보, 책 정보 받는 곳 (배송승인 전 / dv_state=0)-->
+	<insert id="delivery_dvinfo" parameterType="com.bokm.vo.Delivery">
+		insert into delivery(dv_bcode, dv_user,dv_bk_id, dv_bk_name, dv_location, dv_requesttime, dv_state, dv_expectedtime)
+		 values(#{dv_bcode},#{dv_user},#{dv_bk_id},#{dv_bk_name},#{dv_location},now(),'배송준비',date_add(now(), interval 3 day))
+	</insert>
+	<select id="delivery_mmbook" resultType="com.bokm.vo.Delivery" parameterType="String">
+		select * from delivery where dv_bcode=#{dv_bcode} and (dv_state='배송중' or dv_state='배송준비');
+	</select>
+
+
+	<!-- 마이페이지에서 아이디가 같은 거 뽑아오기 -->
+	<select id="mypage_deliveryList" parameterType="String" resultType="com.bokm.vo.Delivery">
+		select * from delivery where dv_bk_id=#{dv_bk_id};
+	</select>
+	<!-- 마이페이지에서 시간이 지나면 배송완료로 업데이트!해주기 -->
+	<update id="mypage_deliveryComplete">
+		<![CDATA[ update delivery set dv_state='배송완료' where dv_expectedtime < now() and dv_state='배송중' ]]>
+	</update>
+	<!-- 배송완료 탭인 것은 예상시간->완료시간이 되게하기-->
+	<update id="mypage_expectedEqualComplete">
+		update delivery set dv_completetime=dv_expectedtime where dv_state='배송완료'
+	</update>
+	<!-- 마이페이지 새창 띄울 시에 배송완료일 떄 -->
+	<select id="mypage_deliveryPopup1" parameterType="com.bokm.vo.Delivery" resultType="com.bokm.vo.Delivery">
+		select * from delivery where dv_bcode=#{dv_bcode} and (dv_state='배송완료' or dv_state='배송완료[관리자 승인]');
+	</select>
+	<!-- 마이페이지 새창 띄울 시에 배송중일 떄 -->
+	<select id="mypage_deliveryPopup2" parameterType="com.bokm.vo.Delivery" resultType="com.bokm.vo.Delivery">
+		select * from delivery where dv_bcode=#{dv_bcode} and dv_state='배송중'
+	</select>
+	<!-- 마이페이지 새창 띄울 시에 배송준비일 떄 -->
+	<select id="mypage_deliveryPopup3" parameterType="com.bokm.vo.Delivery" resultType="com.bokm.vo.Delivery">
+		select * from delivery where dv_bcode=#{dv_bcode} and dv_state='배송준비'
+	</select>
+
+		
+	<!-- 관리자 / 배송 승인 전인 리스트 띄워주기 -->
+	<select id="manager_prevDelivery" resultType="com.bokm.vo.Delivery">
+		select * from delivery where dv_state='배송준비'
+	</select>
+	<select id="manager_nowDelivery" resultType="com.bokm.vo.Delivery">
+		select * from delivery where dv_state='배송중' or dv_state='배송완료' order by dv_state desc
+	</select>
+	<select id="manager_afterDelivery" resultType="com.bokm.vo.Delivery">
+		select * from delivery where dv_state='배송완료' or dv_state='배송완료[관리자 승인]'
+	</select>
+	<!-- 관리자 / 배송목록 상세정보 띄워주기 -->
+	<select id="manager_prevDeliveryDetail" parameterType="String" resultType="com.bokm.vo.Delivery">
+		select * from delivery where dv_bcode=#{dv_bcode} and (dv_state='배송준비' or dv_state='배송중')
+	</select>
+	<!-- 배송 승인하기 관리자 모드 -->
+	<update id="manager_deliveryOk" parameterType="com.bokm.vo.Delivery">
+		<!-- dv_state의 0을 1로 바꿔주고, dv_deliveryman도 바꿔주고, dv_requesttime,dv_expectedtime도 바꿔주는 질의문 -->
+		update delivery set dv_state='배송중', dv_deliveryman=#{dv_deliveryman}, dv_requesttime=now(),
+		 dv_expectedtime=date_add(now(), interval 3 day) where (dv_bcode=#{dv_bcode} and dv_state='배송준비')
+	</update>
+	<!-- 배송 완료를 누르면 completetime이 now로 -->
+	<update id="manager_deliveryComplete" parameterType="com.bokm.vo.Delivery">
+		update delivery set dv_completetime=now() where (dv_bcode=#{dv_bcode} and dv_state='배송중')
+	</update>
+	<!-- 관리자가 승인을 누르면 배송완료[관리자 승인]이라고 뜨게하기 -->
+	<update id="manager_deliveryComplete2" parameterType="com.bokm.vo.Delivery">
+		update delivery set dv_state='배송완료[관리자 승인]' where dv_bcode=#{dv_bcode} and (dv_state='배송완료' or dv_state='배송중')
+	</update>
+	<!-- 관리자가 승인을 누르면 execptedtime을 삭제하는 구문 -->
+	<!-- <delete id="manager_deleteTime">
+		delete from delivery where 
+	</delete> -->
+</mapper>

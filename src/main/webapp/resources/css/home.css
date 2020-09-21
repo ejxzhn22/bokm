@@ -1,0 +1,199 @@
+@charset "UTF-8";
+a{
+     text-decoration:none;
+ }
+
+ .image {
+     height: 550px;
+     width: 100%;
+ }
+
+ .search {
+     padding: 150px;
+     display: flex;
+     justify-content:center;
+ }
+
+ .btn-search {
+   	width:80px;
+   	background-color: #624941;
+   	color:#f0f0f0;
+   	padding:5px;
+   	font-size:25px;
+   	border: 1.5px solid #ef7a34;
+   	border-radius:5px;
+   	box-shadow:5px 5px 15px gray;
+   	height: 66px;
+ }
+ .btn-search:hover{
+ color:#ef7a34;
+ }
+
+ .bar-search {
+     height: 65px;
+     border: 2px solid #ef7a34;
+     box-shadow: 5px 5px 15px gray;
+     padding-top: 7px;
+ }
+
+ .wrap-top-service{
+	 margin-top:19px;
+     padding: 10px 250px;
+ }
+
+ .top-service {
+     background-color: #f0f0f0;
+     min-width: 1000px;
+ }
+
+ .calendar {
+     width: 100%;
+     height: 140px;
+     display: flex;
+     align-items: center;
+     justify-content: space-around;
+ }
+.calendar-title{
+	color: #624941;
+	background-color:#f9edd6;
+}
+.calendar-ul{
+	list-style-type : none;
+	padding:0;
+	
+}
+.calendar-li{
+	color: #ef7a34;
+	border: 1px solid #ef7a34;
+	width: 70px;
+	margin:10px auto;
+	padding: 2px;
+}
+
+.calendar-li0{
+	color: #ef7a34;
+	border: 1px solid #ef7a34;
+	width: 58px;
+	margin:10px auto;
+	padding: 2px;
+}
+
+.calendar-li2{
+	color: #575757;
+	margin:0 auto;
+}
+
+ .service {
+     padding: 10px;
+     display: flex;
+     min-width: 1000px;
+     justify-content:center;
+
+
+ }
+
+ .btn-service {
+ 	font-size:18px;
+     width: 900px;
+     height: 230px;
+     display: flex;
+     align-items: center;
+     justify-content: space-around;
+     text-align: center;
+     min-width: 900px;
+ }
+.service_icon:hover{
+	color:#ef7a34;
+}
+
+
+ .low-service {
+     display: flex;
+     min-width: 1250px;
+     justify-content:center;
+
+ }
+ 
+
+.notice{
+	width: 600px; 
+	padding: 30px;
+}
+.culture{
+	width: 600px; 
+	padding: 30px;
+}
+
+.notice-title{
+	background: #768f56;
+	color: #fff;
+	width:85px;
+}
+.culture-title{
+	background-color: #4a7cb2;
+	color: #fff;
+	width:85px;
+}
+
+.plus{
+	margin-top:10px;
+	float:right;
+}
+
+ h3 {
+     display: inline-block;
+     color:#383737;
+ }
+
+ .photo {
+     width: 850px;
+     height: 180px;
+     display: flex;
+     align-items: center;
+     justify-content: space-around;
+     margin-right: 50px;
+
+ }
+
+.service_img{
+	 width: 120px;
+     height: 110px;
+     vertical-align: middle;
+}
+.photo_img {
+     width: 235px;
+     height: 180px;
+     vertical-align: middle;
+ }
+
+ 
+
+.photo{
+	display:flex;
+	justify-content:center;
+	margin: 0 auto;
+	margin-top:40px;
+	
+}
+
+ 
+
+
+ .home-image {
+     margin: 0 10px;
+ }
+
+ #btn-top {
+     position: fixed;
+     right: 2%;
+     bottom: 50px;
+     display: none;
+     z-index: 999;
+     background-color: rgb(0, 0, 0);
+     font-size: 15px;
+     padding: 0.7em 0.7em;
+     margin-right: 0.1em;
+     color: white;
+     opacity:0.8;
+     border-radius:10px;
+ }

@@ -1,0 +1,33 @@
+@charset "UTF-8";
+
+
+.mybook_title {
+  font-size: 35px;
+  margin: 0 0 40px;
+}
+
+.mybook_guide-list {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 1em;
+  margin-bottom: 65px;
+}
+	.mybook_top{
+		display:flex;
+		padding-top:20px;
+	}
+	.mybook_topline{
+		width:1500px;
+		border-top:3px solid #f0f0f0;
+	}
+	.mybook_title {
+	  width:200px;
+	  text-align:center;
+	  font-size: 35px;
+	  margin: 0 0 40px;
+	  padding-top:20px;
+	  border-top:3px solid orange;
+	}
+	.mybook{
+		width:1400px;
+	}

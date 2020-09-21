@@ -1,0 +1,144 @@
+@charset "UTF-8";
+html,body{
+	margin:0;
+	padding: 0;
+	height:100%;
+	width: 100%;
+}
+
+.nav-menu:hover{
+	color:#ef7a34;
+}
+
+.logo111{
+		width:350px;
+		height:80px;
+	}
+ /*header*/
+.header {
+	height: 180px;
+}
+.header1 {
+	line-height: 1.3em;
+	width: 100%;
+	height: 120px;
+	display:flex;
+	justify-content:center;
+}
+.main-icon{
+	font-size:2em;
+	width:500px;
+	height:80px;
+	text-align:center;
+	margin-top:20px;
+	display:inline-block;
+	font-family: 'Noto Sans KR', sans-serif;
+}
+.header-icon{
+	padding-left:100px;
+	width:800px;
+	height:100px;
+	text-align:right;
+	display:inline-block;
+	margin-top:30px;
+	
+}
+.dot{
+	float:right;
+	display:flex;
+	justify-content:space-around;
+	align-items : center;
+	flex-direction : row;
+	width:480px;
+	height:40px;
+	background: white;
+	background-image: radial-gradient(#444 18%, transparent 0), radial-gradient(#444 18%, transparent 0);
+ 	background-position: 0 0, 10px 0px;
+ 	background-size: 5px 4px;
+ 	margin-top: 12.5px;
+}
+.nav-bar {
+	font-size:1.3em;
+	font-family: NS, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	box-sizing: border-box;
+	width: 100%;
+	height: 70px;
+	background: #624941;
+	display: flex;
+	align-items:center;
+	justify-content: space-between;
+	padding: 0 90px 0 110px;
+	margin: 0 auto;
+}
+.nav-bar > ul{
+	margin:0;
+}
+a.nav-menu{
+color:white;
+font-size: 17px;
+}
+ .hidden-nav-bar{
+	display:flex;
+	justify-content : space-around;
+	background:#f0f0f0;
+	position:relative;
+	z-index:100;
+	padding-left: 140px;
+    padding-right: 100px;
+}
+ul.hidden-ul{
+	width:300px;
+	height:200px;
+	padding: 14px 5px 5px;
+	border-left:solid 0.3px #e2dfdf;
+	list-style:none;
+}
+li.hidden-menu{
+	padding: 4px 15px 5px;
+}
+a{
+	color:black;
+	text-decoration: none;
+}
+.all-nav-bar{
+	position: relative; top:0; left:0; 
+ width: 100%;
+ z-index:100;
+}
+.search-menu{
+	margin-left:50px;
+
+}
+
+.nav-bar-sub{
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	height:50px;
+	background-color:#f0f0f0;
+}
+.nav-bar-icon{
+	width:300px;
+	display:flex;
+}
+.nav-bar-search{
+	width:700px;
+	display:flex;
+	justify-content:right;
+	align-items:center;
+	text-align:right;
+}
+.nav-bar-sub, i{
+	display:flex;
+	justify-content: start;
+	font-family: 'Noto Sans KR', sans-serif;
+	
+}
+.nav-bar-icon{
+	width:200px;
+	margin-left:150px;
+}
+.h1{
+	margin-top: 20px;
+    margin-bottom: 30px;
+}

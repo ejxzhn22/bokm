@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bokm.adminMapper">
+	
+	<!-- 대출관리 대출중인 책 목록 가져오기 -->
+	<select id="adminborrow" resultType="java.util.Map">
+		select borrowlist.bl_id,bd_bo_num, bd_bcode,bd_date, bd_arrears,book.bk_name,book.bk_writer,book.bk_publisher
+		from borrowdetail
+		inner join borrowlist on (borrowdetail.bd_bo_num = borrowlist.bl_num)
+		inner join book on borrowdetail.bd_bcode = book.bk_icode
+		where bd_state_num=1
+		order by bd_date desc
+	</select>
+	
+	<!-- 대출반납  borrowdetail update -->
+	<update id="bookreturn" parameterType="int">
+		update borrowdetail set bd_state_num=2, bd_real_return_date=now() where bd_bo_num=#{bd_bo_num}
+	</update>
+	
+	<!-- 대출반납  book update-->
+	<update id="bstateupdate" parameterType="String">
+		update book set bk_state="대출가능" where bk_icode=#{bd_bcode}
+	</update>
+	
+	<!-- 예약-> 대출신청 가능 알림 -->
+	<insert id="resernotice" parameterType="com.bokm.vo.Board">
+		insert into board (bb_title, bb_content, bb_name, bb_bnum, bb_id) 
+		values (#{bb_title},#{bb_content}, #{bb_name}, #{bb_bnum}, #{bb_id})
+	</insert>
+	
+	<!-- 예약현황 가져오기 -->
+	<select id="adminreser" resultType="Map">
+	<![CDATA[
+		select book.bk_name, book.bk_writer, book.bk_publisher, book.bk_icode,borrowdetail.bd_real_return_date, borrowdetail.bd_return_date,borrowdetail.bd_reservation
+		from book
+		join borrowdetail on borrowdetail.bd_bcode=book.bk_icode
+		where borrowdetail.bd_reservation != 0 and DATE_ADD(borrowdetail.bd_real_return_date, INTERVAL 3 DAY) < now()
+		]]>
+	</select>
+	
+	<!-- 연체현황 가져오기 -->
+	<select id="adminarrears" resultType="Map">
+	 select DATEDIFF(now(), borrowdetail.bd_return_date) as arrearsdate,book.bk_name,borrowlist.bl_id, book.bk_writer,book.bk_state, book.bk_publisher, book.bk_icode, borrowdetail.bd_real_return_date, borrowdetail.bd_return_date,borrowdetail.bd_bo_num
+	 from borrowdetail
+	 join book on borrowdetail.bd_bcode=book.bk_icode
+	 join borrowlist on borrowlist.bl_num = borrowdetail.bd_bo_num
+	 where borrowdetail.bd_arrears='연체' 
+	</select>
+	
+	<!-- 문제선이 만든 메인 실적 -->
+	<select id="performance" parameterType="String" resultType="int">
+	select count(*) from delivery where(dv_state='배송완료' or dv_state='배송완료[관리자 승인]') and dv_deliveryman = #{dv_deliveryman}
+	</select>
+	
+	
+
+</mapper>

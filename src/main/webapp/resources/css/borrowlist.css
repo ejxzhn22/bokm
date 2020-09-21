@@ -1,0 +1,48 @@
+@charset "UTF-8";
+
+section{
+	width:1250px;
+	margin:0 auto;
+	margin-top:60px;
+}
+
+.borrowlist_top{
+	display:flex;
+	padding-top:20px;
+}
+.borrowlist_topline{
+	width:1100px;
+	border-top:3px solid #f0f0f0;
+}
+.borrowlist_title {
+  width:140px;
+  font-size: 32px;
+  margin: 0 0 10px;
+  padding-top:20px;
+  border-top:3px solid orange;
+  color:#383737;
+}
+
+
+.borrowlist_guide-list {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 1em;
+  margin-bottom: 65px;
+}
+
+.borrolist_btn{
+	
+	margin-right:10px;
+	
+	border:1px solid black;
+	border-radius: .25rem;
+}
+.borrowlist_button{
+	margin-bottom:20px;
+	display:flex;
+	justify-content:flex-end;
+}
+section.borrowlist {
+    height: inherit;
+}

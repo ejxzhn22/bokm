@@ -1,0 +1,143 @@
+.myinfo{
+	width:1250px;
+	margin:0 auto;
+	margin-top:80px;
+	
+}
+
+.myinfo_top{
+	display:flex;
+	padding-top:20px;
+}
+.myinfo_topline{
+	width:1100px;
+	border-top:3px solid #f0f0f0;
+}
+.myinfo_title {
+  width:200px;
+  font-size: 35px;
+  margin: 0 0 40px;
+  padding-top:20px;
+  border-top:3px solid orange;
+}
+
+.myinfo_info {
+  background-color: #f1f1f1;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 50px;
+  height:250px;
+}
+.myinfo_infolist{
+	margin:auto 0;
+	margin-left: 30px;
+}
+
+.infolist-ul > li {
+  padding: 0.5em 1em;
+  border-bottom: 1px solid #fff;
+  border-top: 1px solid #ddd;
+  font-size: 0.9em;
+  list-style: none;
+}
+.myinfo_infolist2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.myinfo_infolist2-ul {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.myinfo_infolist2-li {
+  width: 220px;
+  height: 100px;
+  margin: 0 1.5% 2%;
+  padding: 1em;
+  background: #fff;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.infolist2-num {
+  color: orange;
+  margin-left: 20px;
+  font-size: 35px;
+}
+
+.myinfo_notice {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.myinfo_noticelist-sen {
+  margin-bottom: 3px;
+  color: #636363;
+  font-size: 0.95em;
+}
+.myinfo_noticelist {
+  width: 700px;
+  height: 120px;
+}
+.myinfo_noticebutton {
+  display: inline-block;
+  margin-top: 50px;
+  text-align: center;
+  height: 60px;
+}
+
+.myinfo_quickbtn {
+  font-size: 20px;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+}
+.myinfo_quickbtn-btn {
+  margin: 30px 0;
+}
+
+.myinfo_guide {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+}
+
+.guide-title {
+  font-size: 23px;
+  margin: 20px 0;
+}
+.myinfo_guide-sen {
+  color: #636363;
+  font-size: 0.95em;
+}
+
+.myinfo_guide-list {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 1em;
+  margin-bottom: 65px;
+}
+
+.myinfo_noticebutton,
+.myinfo_guide-btn,
+.myinfo_quickbtn-btn {
+  border: 1.5px solid #ddd;
+  border-radius: 25% 10%;
+  text-align: center;
+  padding: 1em;
+}
+.myinfo_noticebutton:hover,
+.myinfo_guide-btn:hover,
+.myinfo_quickbtn-btn:hover {
+  border: 1.5px solid rgb(28, 28, 94);
+}
+
+a {
+  text-decoration: none;
+  color: #646464;
+}
